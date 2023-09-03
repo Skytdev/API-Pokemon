@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
+
 
 namespace Sharpi.Controllers
 {
@@ -84,6 +86,19 @@ namespace Sharpi.Controllers
             return NoContent();
         }
 
+        [HttpGet]
+        [Route("/Pokemon/{type}/group", Name = "GroupPokemonByType")]
+        public ActionResult<IEnumerable<Pokemon>> Get(string type)
+        {
+            var pokemon = PokemonObjectList.Where(p => p.Type == type).ToList();
+
+            if (pokemon == null)
+            {
+                return NotFound($"There is no {type} pokemon");
+            }
+
+            return pokemon;
+        }
 
     }
 }
