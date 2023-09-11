@@ -11,6 +11,12 @@ namespace Sharpi.Controllers
     {
         private static List<Pokemon> PokemonObjectList = new List<Pokemon>();
 
+        private readonly PokemonContext _context;
+
+        public PokemonController(PokemonContext context)
+        {
+            _context = context;
+        }
 
         [HttpPost]
         [Route("/Pokemon/add", Name = "AddPokemon")]
@@ -21,12 +27,13 @@ namespace Sharpi.Controllers
                 return BadRequest("Pokemon not found");
             }
 
-            if (PokemonObjectList.Any(p => p.Id == pokemon.Id))
+            if (_context.Pokemons.Any(p => p.Id == pokemon.Id))
             {
                 return Conflict("A Pokemon with this ID already exists.");
             }
 
-            PokemonObjectList.Add(pokemon);
+            _context.Pokemons.Add(pokemon);
+            _context.SaveChanges();
 
             return CreatedAtAction(nameof(GetPokemonById), new { id = pokemon.Id }, pokemon);
         }

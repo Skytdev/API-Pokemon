@@ -1,4 +1,6 @@
 
+using Microsoft.EntityFrameworkCore;
+
 namespace Sharpi
 {
     public class Program
@@ -13,6 +15,10 @@ namespace Sharpi
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            // Adding PokemonContext to the services
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConntection");
+            builder.Services.AddDbContext<PokemonContext>(options => options.UseSqlServer(connectionString));
 
             var app = builder.Build();
 
