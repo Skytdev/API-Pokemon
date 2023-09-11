@@ -42,25 +42,31 @@ namespace Sharpi.Controllers
         [Route("/Pokemon/{id}/update", Name = "UpdatePokemon")]
         public IActionResult UpdatePokemon([FromBody] Pokemon updatedPokemon, int id)
         {
-            var pokemon = PokemonObjectList.FirstOrDefault(p => p.Id == id);
-
+            var pokemon = _context.Pokemons.FirstOrDefault(p => p.Id == id);
 
             if (pokemon == null)
             {
                 return NotFound("Pokemon not found");
             }
 
-            //GetPokemons(PokemonObjectList, id, pokemon);
-            
+            pokemon.Name = updatedPokemon.Name;
+            pokemon.Description = updatedPokemon.Description;
+            pokemon.PokemonId = updatedPokemon.PokemonId;
+            pokemon.Height = updatedPokemon.Height;
+            pokemon.Weight = updatedPokemon.Weight;
+            pokemon.Type = updatedPokemon.Type;
+
+            _context.SaveChanges();
 
             return NoContent();
         }
+
 
         [HttpGet]
         [Route("/Pokemon/{id}", Name = "GetPokemonById")]
         public ActionResult<Pokemon> GetPokemonById(int id)
         {
-            var pokemon = PokemonObjectList.FirstOrDefault(p => p.Id == id);
+            var pokemon = _context.Pokemons.FirstOrDefault(p => p.Id == id);
 
             if (pokemon == null)
             {
@@ -74,21 +80,23 @@ namespace Sharpi.Controllers
         [Route("/Pokemon/list", Name = "GetPokemonList")]
         public IEnumerable<Pokemon> Get()
         {
-            return PokemonObjectList;
+            
+            return _context.Pokemons.ToList();
         }
 
         [HttpDelete]
         [Route("/Pokemon/{id}/delete", Name = "DeletePokemon")]
         public IActionResult DeletePokemon(int id)
         {
-            var pokemon = PokemonObjectList.FirstOrDefault(p => p.Id == id);
+            var pokemon = _context.Pokemons.FirstOrDefault(p => p.Id == id);
 
             if (pokemon == null)
             {
                 return NotFound("Pokemon not found");
             }
 
-            PokemonObjectList.Remove(pokemon);
+            _context.Pokemons.Remove(pokemon);
+            _context.SaveChanges();
 
             return NoContent();
         }
@@ -97,7 +105,7 @@ namespace Sharpi.Controllers
         [Route("/Pokemon/{type}/group", Name = "GroupPokemonByType")]
         public ActionResult<IEnumerable<Pokemon>> Get(string type)
         {
-            var pokemon = PokemonObjectList.Where(p => p.Type == type).ToList();
+            var pokemon = _context.Pokemons.Where(p => p.Type == type).ToList();
 
             if (pokemon == null)
             {
